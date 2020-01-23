@@ -13,7 +13,7 @@ export default class Engine extends Infrastructure {
   constructor(params) {
     super(params);
 
-    this.boardRange = _.range(this.board.length);
+    this.factor = n => n ** this.board.length + this.series.length * 2;
   }
 
   takeStep() {
@@ -31,20 +31,16 @@ export default class Engine extends Infrastructure {
   }
 
   /** @returns {number} The index of the best column to choose */
-  getBestChoise() {
+  getBestChoise(excludedColumns = []) {
     const scores = this.getScoreForPosition(this.aiLevel, this.mark, true);
-    return _.maxBy(
-      _.range(this.board.length).filter(
-        i => this.board[i].length < this.maxHeight
-      ),
-      i => scores[i]
-    );
+    console.log(scores);
+    return _.maxBy(this.getAvailableColumns(excludedColumns), i => scores[i]);
   }
 
   getScoreForPosition(n, mark, isRoot = false) {
     const stateScores = [];
-    const results = _.range(this.board.length).map(i =>
-      this.wrapFillColumnTemp(i, mark, () => {
+    const results = this.columnsRange.map(i =>
+      this.onFillColumn(i, mark, () => {
         const lastCell = Calc.getLastCellAsString(this.board, i);
         if (this.won(lastCell)) {
           return 1;
@@ -61,10 +57,10 @@ export default class Engine extends Infrastructure {
 
     const stateScoresForFurtherDeep = [...stateScores]
       .sort((a, b) => (mark === this.mark ? b - a : a - b))
-      .slice(0, 4);
+      .slice(0, 3);
 
     const scores = results.map((result, i) => {
-      return this.wrapFillColumnTemp(i, mark, () => {
+      return this.onFillColumn(i, mark, () => {
         if (result === 1) return this.factor(n);
         if (result === -1) return -this.factor(n);
 
@@ -102,8 +98,8 @@ export default class Engine extends Infrastructure {
     );
   }
 
-  everyStepMatching(mark, fn) {
-    return this.boardRange.every(i => {
+  onEveryAvailableStep(mark, fn) {
+    return this.columnsRange.every(i => {
       if (this.board[i].length === this.maxHeight) return true;
 
       this.appendToColumn(i, mark);
@@ -113,7 +109,7 @@ export default class Engine extends Infrastructure {
     });
   }
   findStepMatching(mark, fn) {
-    return this.boardRange.find(i => {
+    return this.columnsRange.find(i => {
       if (this.board[i].length === this.maxHeight) return false;
 
       this.appendToColumn(i, mark);
@@ -124,7 +120,7 @@ export default class Engine extends Infrastructure {
   }
 
   findStepsMatching(mark, fn) {
-    return this.boardRange.filter(i => {
+    return this.columnsRange.filter(i => {
       if (this.board[i].length === this.maxHeight) return false;
 
       this.appendToColumn(i, mark);
@@ -175,7 +171,7 @@ export default class Engine extends Infrastructure {
       this.mark,
       () =>
         !this.canLose() &&
-        this.everyStepMatching(this.opponentMark, () => this.canWin())
+        this.onEveryAvailableStep(this.opponentMark, () => this.canWin())
     );
 
     if (cell !== undefined && takeAction) {
@@ -186,42 +182,33 @@ export default class Engine extends Infrastructure {
     return cell !== undefined;
   }
 
-  onSwitchedMarks(fn) {
-    [this.mark, this.opponentMark] = [this.opponentMark, this.mark];
-    const res = fn();
-    [this.mark, this.opponentMark] = [this.opponentMark, this.mark];
-    return res;
-  }
-
   block2WaysToLose() {
-    return false;
     // const cellsToLose = this.findStepsMatching(this.mark, () =>
     //   this.onSwitchedMarks(() => this.have2WaysToWin(false))
     // );
-    const cellsToLose = this.findStepsMatching(this.mark, () =>
-      this.findStepMatching(
-        this.opponentMark,
-        () =>
-          !this.canWin() &&
-          this.everyStepMatching(this.mark, () => this.canLose())
-      )
+    const cellsToLose = this.findStepsMatching(
+      this.mark,
+      () =>
+        this.findStepMatching(
+          this.opponentMark,
+          () =>
+            !this.canWin() &&
+            this.onEveryAvailableStep(this.mark, () => this.canLose())
+        ) !== undefined
     );
 
-    if (cellsToLose.length > 0) {
-      const cellsToBlock = _.range(this.board.length).filter(
-        i => !cellsToLose.includes(i) && this.board[i].length < this.maxHeight
-      );
+    // if only one option is forbidden - it's obvious for deep AI.
+    if (cellsToLose.length > 1) {
+      const cellsToBlock = this.getAvailableColumns(cellsToLose);
       console.log({ cellsToBlock, cellsToLose });
 
       if (cellsToBlock.length === 0) return false;
 
-      const cell = _.maxBy(cellsToBlock, cell =>
-        this.wrapFillColumnTemp(cell, this.mark, () => this.stateScore())
-      );
+      const cell = this.getBestChoise(cellsToLose);
       this.appendToColumn(cell, this.mark);
       this.message = 'Blocked ya from 2 ways!';
     }
 
-    return cellsToLose.length > 0;
+    return cellsToLose.length > 1;
   }
 }

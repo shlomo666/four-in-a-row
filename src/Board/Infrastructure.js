@@ -29,15 +29,14 @@ export default class Infrastructure {
     } else {
       const series = Calc.formSeries(this.board.length, this.maxHeight);
 
-      const basicCounter = { [this.mark]: 0, [this.opponentMark]: 0 };
       const markCountersBySeries = new Map(
         series.map(series => [
           series,
-          Object.assign(
-            {},
-            basicCounter,
-            _.countBy(series, c => this.board[c.x][c.y])
-          )
+          {
+            [this.mark]: 0,
+            [this.opponentMark]: 0,
+            ..._.countBy(series, c => this.board[c.x][c.y])
+          }
         ])
       );
 
@@ -46,13 +45,11 @@ export default class Infrastructure {
       this.seriesByCell = _.range(4)
         .map(i => _.groupBy(series, series => Calc.stringifyCell(series[i])))
         .map(group =>
-          _.fromPairs(
-            _.toPairs(group).map(([key, seriesArr]) => [
-              key,
-              seriesArr.map(series => markCountersBySeries.get(series))
-            ])
+          _.mapValues(group, seriesArr =>
+            seriesArr.map(series => markCountersBySeries.get(series))
           )
         )
+        // _.merge but keep original pointers
         .reduce((unitedMapByCell, currMapByCell) => {
           Object.keys(currMapByCell).forEach(key => {
             if (key in unitedMapByCell) {
@@ -65,7 +62,7 @@ export default class Infrastructure {
         }, {});
     }
 
-    this.factor = n => n ** this.board.length * this.series.length * 4;
+    this.columnsRange = _.range(this.board.length);
   }
 
   /** @param {number} col */
@@ -106,8 +103,12 @@ export default class Infrastructure {
     }
   }
 
-  wrapFillColumnTemp(i, mark, fn) {
-    if (this.board[i].length === this.maxHeight) {
+  toggleMark(mark) {
+    return mark === this.mark ? this.opponentMark : this.mark;
+  }
+
+  onFillColumn(i, mark, fn) {
+    if (this.isColumnFull(i)) {
       return 0;
     }
     this.appendToColumn(i, mark);
@@ -116,7 +117,20 @@ export default class Infrastructure {
     return res;
   }
 
-  toggleMark(mark) {
-    return mark === this.mark ? this.opponentMark : this.mark;
+  isColumnFull(i) {
+    return this.board[i].length === this.maxHeight;
+  }
+
+  onSwitchedMarks(fn) {
+    [this.mark, this.opponentMark] = [this.opponentMark, this.mark];
+    const res = fn();
+    [this.mark, this.opponentMark] = [this.opponentMark, this.mark];
+    return res;
+  }
+
+  getAvailableColumns(excludedColumns = []) {
+    return this.columnsRange.filter(
+      i => !excludedColumns.includes(i) && this.board[i].length < this.maxHeight
+    );
   }
 }
