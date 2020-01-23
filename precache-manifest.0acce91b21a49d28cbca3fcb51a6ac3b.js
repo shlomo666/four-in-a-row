@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ae508163b17c485cfacf0ce3ffdfa7ef",
+    "revision": "90bbf737c053c3e3b5303332af8cce4a",
     "url": "/four-in-a-row/index.html"
   },
   {
-    "revision": "faf02a530b74e1d197f8",
+    "revision": "61ba158b82dab5de0b55",
     "url": "/four-in-a-row/static/css/2.96479aa2.chunk.css"
   },
   {
-    "revision": "cf01778e1ed7a7d14962",
+    "revision": "c846b1d7856cb9d652b2",
     "url": "/four-in-a-row/static/css/main.5ecd60fb.chunk.css"
   },
   {
-    "revision": "faf02a530b74e1d197f8",
-    "url": "/four-in-a-row/static/js/2.2029c574.chunk.js"
+    "revision": "61ba158b82dab5de0b55",
+    "url": "/four-in-a-row/static/js/2.60d8ff08.chunk.js"
   },
   {
     "revision": "a43ccc6eaceb95634adbc1f97bd71b22",
-    "url": "/four-in-a-row/static/js/2.2029c574.chunk.js.LICENSE"
+    "url": "/four-in-a-row/static/js/2.60d8ff08.chunk.js.LICENSE"
   },
   {
-    "revision": "cf01778e1ed7a7d14962",
-    "url": "/four-in-a-row/static/js/main.7b0ffcf0.chunk.js"
+    "revision": "c846b1d7856cb9d652b2",
+    "url": "/four-in-a-row/static/js/main.de7a27ab.chunk.js"
   },
   {
     "revision": "8dd0b3a784579d0c70be",
