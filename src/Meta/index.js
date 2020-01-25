@@ -13,7 +13,7 @@ export default class Meta extends React.Component {
 
   render() {
     const { first, second } = this.state;
-    const { onChange, onRestart } = this.props;
+    const { onChange = () => {}, onRestart } = this.props;
 
     return (
       <div

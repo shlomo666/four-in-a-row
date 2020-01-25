@@ -9,7 +9,7 @@ export default class Infrastructure {
       boardRows,
       aiMark,
       opponentMark,
-      aiLevel,
+      getAILevel,
       refs
     } = params;
 
@@ -22,7 +22,7 @@ export default class Infrastructure {
     /** @type {string} */
     this.opponentMark = opponentMark;
     /** @type {number} */
-    this.aiLevel = aiLevel;
+    this.getAILevel = getAILevel;
 
     if (refs) {
       Object.assign(this, refs);

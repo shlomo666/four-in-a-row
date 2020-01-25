@@ -10,6 +10,7 @@ const options = [
 ];
 
 const DEFAULT_LEVEL = 7;
+const MAX_LEVEL = 12;
 
 function TextDiv({ children }) {
   return <div style={{ minWidth: 120 }}>{children}</div>;
@@ -50,18 +51,6 @@ export default function PlayerData({ data, turn, onChange }: Props) {
         </TextDiv>
         <ComponentDiv>
           <Select
-            // theme={theme => ({
-            //   ...(console.log(theme) || theme),
-            //   // borderRadius: 0,
-            //   colors: {
-            //     ...Object.fromEntries(
-            //       Object.entries(theme.colors).map(([k, v]) => [k, '#7f7878'])
-            //     ),
-            //     text: 'white',
-            //     primary: '#7f7878',
-            //     primary25: '#7f7878'
-            //   }
-            // })}
             value={currVal}
             onChange={type =>
               onChange({ type: type.value, level: data.level || DEFAULT_LEVEL })
@@ -78,9 +67,8 @@ export default function PlayerData({ data, turn, onChange }: Props) {
             </TextDiv>
             <ComponentDiv>
               <Slider
-                // style={{ backgroundColor: '#7f7878', color: 'white' }}
                 min={1}
-                max={8}
+                max={MAX_LEVEL}
                 value={data.level || DEFAULT_LEVEL}
                 dots={true}
                 onChange={level => onChange({ type: data.type, level })}

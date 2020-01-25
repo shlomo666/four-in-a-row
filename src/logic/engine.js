@@ -32,8 +32,7 @@ export default class Engine extends Infrastructure {
 
   /** @returns {number} The index of the best column to choose */
   getBestChoise(excludedColumns = []) {
-    const scores = this.getScoreForPosition(this.aiLevel, this.mark, true);
-    console.log(scores);
+    const scores = this.getScoreForPosition(this.getAILevel(), this.mark, true);
     return _.maxBy(this.getAvailableColumns(excludedColumns), i => scores[i]);
   }
 
@@ -200,7 +199,6 @@ export default class Engine extends Infrastructure {
     // if only one option is forbidden - it's obvious for deep AI.
     if (cellsToLose.length > 1) {
       const cellsToBlock = this.getAvailableColumns(cellsToLose);
-      console.log({ cellsToBlock, cellsToLose });
 
       if (cellsToBlock.length === 0) return false;
 
