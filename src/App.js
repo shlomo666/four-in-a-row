@@ -27,9 +27,11 @@ import {
 export default class App extends React.Component {
   state = {
     steps: window.location.pathname
+      .split('/')
+      .pop()
       .split('')
-      .slice(1)
       .map(parseFloat)
+      .filter(n => !isNaN(n))
   };
 
   constructor(props) {
