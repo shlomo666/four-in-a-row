@@ -58,6 +58,10 @@ export default class Engine extends Infrastructure {
       .sort((a, b) => (mark === this.mark ? b - a : a - b))
       .slice(0, 3);
 
+    if (this.isOverwhelmingDifference(...stateScoresForFurtherDeep)) {
+      stateScoresForFurtherDeep.splice(1);
+    }
+
     const scores = results.map((result, i) => {
       return this.onFillColumn(i, mark, () => {
         if (result === 1) return this.factor(n);
@@ -74,6 +78,10 @@ export default class Engine extends Infrastructure {
     });
 
     return isRoot ? scores : _.sum(scores.filter(n => n !== -Infinity));
+  }
+
+  isOverwhelmingDifference(a, b) {
+    return (a > 0 && a > b * 2) || (a < 0 && a * 2 > b);
   }
 
   stateScore() {
