@@ -23,7 +23,8 @@ const engineSecond = new Engine({
   getAILevel: () => gameVars.meta.second.level,
   refs: {
     series: engineFirst.series,
-    seriesByCell: engineFirst.seriesByCell
+    seriesByCell: engineFirst.seriesByCell,
+    stats: engineFirst.stats
   }
 });
 

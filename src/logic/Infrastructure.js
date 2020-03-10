@@ -27,6 +27,7 @@ export default class Infrastructure {
     if (refs) {
       Object.assign(this, refs);
     } else {
+      this.stats = { lastColumn: -1 };
       const series = Calc.formSeries(this.board.length, this.maxHeight);
 
       const markCountersBySeries = new Map(
@@ -68,7 +69,7 @@ export default class Infrastructure {
   /** @param {number} col */
   appendToColumn(col, mark) {
     this.board[col].push(mark);
-    this.lastColumn = col;
+    this.stats.lastColumn = col;
     this.seriesByCell[Calc.getLastCellAsString(this.board, col)].forEach(
       counterByMark => counterByMark[mark]++
     );

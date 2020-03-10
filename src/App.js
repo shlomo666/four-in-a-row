@@ -103,7 +103,7 @@ export default class App extends React.Component {
       currentPlayer,
       engineFirst
     } = gameVaraiables;
-    const lastColumn = lastEngine().lastColumn;
+    const lastColumn = lastEngine().stats.lastColumn;
 
     return (
       <PlayGameContianer>

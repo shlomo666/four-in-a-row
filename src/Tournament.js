@@ -16,7 +16,7 @@ export const setBoard = steps => {
 
   gameVaraiables.currentPlayer =
     steps.length % 2 === 0 ? PlayerTurn.FIRST : PlayerTurn.SECOND;
-  lastEngine().lastColumn = _.last(steps);
+  lastEngine().stats.lastColumn = _.last(steps);
 };
 
 export const isGameOver = () => {
@@ -31,7 +31,7 @@ export const performAIMove = onStep => {
   currentEngine.takeStep();
   gameVaraiables.gameMessage = currentEngine.message;
 
-  onStep(currentEngine.lastColumn);
+  onStep(currentEngine.stats.lastColumn);
 };
 
 export const isCurrentPlayerType = n => {
